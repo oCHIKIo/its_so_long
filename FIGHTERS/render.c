@@ -6,46 +6,82 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 03:42:49 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/19 04:09:54 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/19 18:12:53 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../so_long.h"
 
-void	load_textures(t_game *game)
+void load_textures(t_game *game)
 {
-	int	width = 32;
-	int	height = 32;
+    int width = TILE_SIZE;
+    int height = TILE_SIZE;
 
-	game->tex.wall = mlx_xpm_file_to_image(game->mlx, "textures/wall.xpm", &width, &height);
-	game->tex.floor = mlx_xpm_file_to_image(game->mlx, "textures/floor.xpm", &width, &height);
-	game->tex.player = mlx_xpm_file_to_image(game->mlx, "textures/player.xpm", &width, &height);
-	game->tex.collectible = mlx_xpm_file_to_image(game->mlx, "textures/collectible.xpm", &width, &height);
-	game->tex.exit = mlx_xpm_file_to_image(game->mlx, "textures/exit.xpm", &width, &height);
+    game->tex.wall = mlx_xpm_file_to_image(game->mlx, "TEXTURES/wall.xpm", &width, &height);
+    if (!game->tex.wall)
+        ft_printf("Error: Failed to load wall.xpm\n");
+    game->tex.floor = mlx_xpm_file_to_image(game->mlx, "TEXTURES/floor.xpm", &width, &height);
+    if (!game->tex.floor)
+        ft_printf("Error: Failed to load floor.xpm\n");
+    game->tex.player_right = mlx_xpm_file_to_image(game->mlx, "TEXTURES/player_looking_right.xpm", &width, &height);
+    if (!game->tex.player_right)
+        ft_printf("Error: Failed to load player_looking_right.xpm\n");
+    game->tex.player_left = mlx_xpm_file_to_image(game->mlx, "TEXTURES/player_looking_left.xpm", &width, &height);
+    if (!game->tex.player_left)
+        ft_printf("Error: Failed to load player_looking_left.xpm\n");
+    game->tex.player_back = mlx_xpm_file_to_image(game->mlx, "TEXTURES/player_looking_back.xpm", &width, &height);
+    if (!game->tex.player_back)
+        ft_printf("Error: Failed to load player_looking_back.xpm\n");
+    game->tex.collectible = mlx_xpm_file_to_image(game->mlx, "TEXTURES/collectible.xpm", &width, &height);
+    if (!game->tex.collectible)
+        ft_printf("Error: Failed to load collectible.xpm\n");
+    game->tex.exit = mlx_xpm_file_to_image(game->mlx, "TEXTURES/exit.xpm", &width, &height);
+    if (!game->tex.exit)
+        ft_printf("Error: Failed to load exit.xpm\n");
+    game->tex.exit_open = mlx_xpm_file_to_image(game->mlx, "TEXTURES/exit_open.xpm", &width, &height);
+    if (!game->tex.exit_open)
+        ft_printf("Error: Failed to load exit_open.xpm\n");
 }
 
-void	render_map(t_game *game)
+void render_map(t_game *game)
 {
-	int	x = 0;
-	int	y = 0;
+    int x;
+    int y;
 
-	while (y < game->height)
-	{
-		x = 0;
-		while (x < game->width)
-		{
-			if (game->map[y][x] == '1')
-				mlx_put_image_to_window(game->mlx, game->win, game->tex.wall, x * 32, y * 32);
-			else if (game->map[y][x] == '0')
-				mlx_put_image_to_window(game->mlx, game->win, game->tex.floor, x * 32, y * 32);
-			else if (game->map[y][x] == 'P')
-				mlx_put_image_to_window(game->mlx, game->win, game->tex.player, x * 32, y * 32);
-			else if (game->map[y][x] == 'C')
-				mlx_put_image_to_window(game->mlx, game->win, game->tex.collectible, x * 32, y * 32);
-			else if (game->map[y][x] == 'E')
-				mlx_put_image_to_window(game->mlx, game->win, game->tex.exit, x * 32, y * 32);
-			x++;
-		}
-		y++;
-	}
+    y = 0;
+    while (y < game->height)
+    {
+        x = 0;
+        while (x < game->width)
+        {
+            if (game->map[y][x] == '1' && game->tex.wall)
+                mlx_put_image_to_window(game->mlx, game->win, game->tex.wall, x * TILE_SIZE, y * TILE_SIZE);
+            else if (game->map[y][x] == '0' && game->tex.floor)
+                mlx_put_image_to_window(game->mlx, game->win, game->tex.floor, x * TILE_SIZE, y * TILE_SIZE);
+            else if (game->map[y][x] == 'C' && game->tex.collectible)
+                mlx_put_image_to_window(game->mlx, game->win, game->tex.collectible, x * TILE_SIZE, y * TILE_SIZE);
+            else if (game->map[y][x] == 'E')
+            {
+                if (game->collectibles == 0 && game->tex.exit_open)
+                    mlx_put_image_to_window(game->mlx, game->win, game->tex.exit_open, x * TILE_SIZE, y * TILE_SIZE);
+                else if (game->tex.exit)
+                    mlx_put_image_to_window(game->mlx, game->win, game->tex.exit, x * TILE_SIZE, y * TILE_SIZE);
+            }
+            x++;
+        }
+        y++;
+    }
+
+    y = 0;
+    while (y < game->height)
+    {
+        x = 0;
+        while (x < game->width)
+        {
+            if (game->map[y][x] == 'P' && game->current_player_tex)
+                mlx_put_image_to_window(game->mlx, game->win, game->current_player_tex, x * TILE_SIZE, y * TILE_SIZE);
+            x++;
+        }
+        y++;
+    }
 }

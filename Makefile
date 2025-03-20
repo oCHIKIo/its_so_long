@@ -1,7 +1,7 @@
 NAME = so_long
 
 SRC_DIR = FIGHTERS
-SRC =	$(SRC_DIR)/main.c \
+SRC =	$(SRC_DIR)/engine.c \
 		$(SRC_DIR)/map.c \
 		$(SRC_DIR)/movement.c \
 		$(SRC_DIR)/render.c \

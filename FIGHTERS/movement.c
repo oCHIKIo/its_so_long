@@ -6,7 +6,7 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 03:44:25 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/20 03:50:12 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/20 07:38:00 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void move_player(t_game *game, int dx, int dy)
             }
             else
             {
+                game->tried_to_exit = 1; // Set flag to indicate player tried to exit
                 ft_printf("\033[1;35mYou need to collect all items first! 🐺\033[0m\n");
                 return; // Don't move the player onto the exit
             }

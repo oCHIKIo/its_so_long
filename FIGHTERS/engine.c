@@ -6,7 +6,7 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 03:46:05 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/20 04:07:12 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/20 07:37:24 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,15 @@ void cleanup_and_exit(t_game *game)
         mlx_destroy_image(game->mlx, game->tex.exit_open);
     if (game->tex.in_top_of_exit)
         mlx_destroy_image(game->mlx, game->tex.in_top_of_exit);
+
+    // Destroy window and display
     if (game->win)
         mlx_destroy_window(game->mlx, game->win);
     if (game->mlx)
         mlx_destroy_display(game->mlx);
     free(game->mlx);
+
+    // Free map
     x = 0;
     while (x < game->height)
     {
@@ -49,18 +53,18 @@ void cleanup_and_exit(t_game *game)
         x++;
     }
     free(game->map);
+
     exit(0);
 }
 
 int close_window(t_game *game)
 {
     if (game->won)
-        ft_printf("\033[1;35mCongrats, you won noobie! :) 🐺\033[0m\n");
+        ft_printf("\033[1;35m🎉 Congrats noobie, You Won <3 🐺\033[0m\n");
     else
-        ft_printf("\033[1;35mWhy did you leave, bro? 🐺\033[0m\n");
-    usleep(2000000); 
+        ft_printf("\033[1;35mWhy did you leave, noobie? 🐺\033[0m\n");
     cleanup_and_exit(game);
-    return (0); // This line is never reached due to exit(0), but included for clarity
+    return (0);
 }
 
 int main(int argc, char **argv)
@@ -123,6 +127,7 @@ int main(int argc, char **argv)
     }
     game.current_player_tex = game.tex.player_looking_right; 
     game.won = 0; // Initialize won flag to 0
+    game.tried_to_exit = 0; // Initialize tried_to_exit flag to 0
     render_map(&game);
     ft_printf("\033[1;33mGame Is Successfully Launched 🐺\033[0m\n");
     mlx_hook(game.win, 17, 0, close_window, &game);

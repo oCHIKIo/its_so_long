@@ -6,7 +6,7 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 01:08:25 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/20 04:13:00 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/20 07:36:58 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ typedef struct s_textures
     void    *collectible;
     void    *exit;
     void    *exit_open;
-    void    *in_top_of_exit; 
+    void    *in_top_of_exit;
 } t_textures;
 
 typedef struct s_game
@@ -50,6 +50,7 @@ typedef struct s_game
     int         collectibles;
     void        *current_player_tex;
     int         won;
+    int         tried_to_exit; 
 } t_game;
 
 void    render_map(t_game *game);

@@ -6,7 +6,7 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 03:42:49 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/20 04:03:50 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/20 07:38:54 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void render_map(t_game *game)
             {
                 if (game->collectibles == 0)
                     mlx_put_image_to_window(game->mlx, game->win, game->tex.exit_open, x * TILE_SIZE, y * TILE_SIZE);
-                else if (game->player_x == x && game->player_y == y)
+                else if (game->tried_to_exit)
                     mlx_put_image_to_window(game->mlx, game->win, game->tex.in_top_of_exit, x * TILE_SIZE, y * TILE_SIZE);
                 else
                     mlx_put_image_to_window(game->mlx, game->win, game->tex.exit, x * TILE_SIZE, y * TILE_SIZE);

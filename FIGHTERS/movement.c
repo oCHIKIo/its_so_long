@@ -6,7 +6,7 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 03:44:25 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/20 07:38:00 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/20 08:33:18 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,31 +44,45 @@ void move_player(t_game *game, int dx, int dy)
         {
             game->collectibles--;
             game->map[new_y][new_x] = '0'; // Clear the collectible
+            if (game->collectibles == 0)
+                game->tried_to_exit = 0; // Reset tried_to_exit when all collectibles are gathered
         }
-        if (game->map[new_y][new_x] == 'E')
+
+        // Check if the player is moving onto the exit tile
+        if (new_x == game->exit_x && new_y == game->exit_y)
         {
-            if (game->collectibles == 0) // Only allow exiting if all collectibles are gathered
+            if (game->collectibles == 0) // Allow winning if all collectibles are gathered
             {
+                game->player_x = new_x;
+                game->player_y = new_y;
+                game->moves++;
+                ft_printf("Moves: %d\n", game->moves);
+                render_map(game);
                 game->won = 1; // Set the won flag to indicate the player won
                 close_window(game);
+                return; // Exit immediately after winning
             }
             else
             {
-                game->tried_to_exit = 1; // Set flag to indicate player tried to exit
+                game->tried_to_exit = 1; // Set flag to indicate player is on the exit with collectibles remaining
                 ft_printf("\033[1;35mYou need to collect all items first! 🐺\033[0m\n");
-                return; // Don't move the player onto the exit
             }
         }
         else
         {
-            game->map[game->player_y][game->player_x] = '0';
-            game->player_x = new_x;
-            game->player_y = new_y;
-            game->map[new_y][new_x] = 'P';
-            game->moves++;
-            ft_printf("Moves: %d\n", game->moves);
-            render_map(game);
+            // If the player moves off the exit tile, reset tried_to_exit
+            if (game->player_x == game->exit_x && game->player_y == game->exit_y)
+            {
+                game->tried_to_exit = 0;
+            }
         }
+
+        // Update player position without overwriting the underlying tile
+        game->player_x = new_x;
+        game->player_y = new_y;
+        game->moves++;
+        ft_printf("Moves: %d\n", game->moves);
+        render_map(game);
     }
 }
 
@@ -96,11 +110,8 @@ int key_hook(int keycode, t_game *game)
     }
     else if (keycode == 65307) // ESC
     {
-        // Print the exit message in purple and exit immediately without delay
         if (!game->won)
-        {
             ft_printf("\033[1;35mWhy did you leave, bro? 🐺\033[0m\n");
-        }
         cleanup_and_exit(game);
     }
     return (0);

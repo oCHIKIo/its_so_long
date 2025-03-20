@@ -1,11 +1,13 @@
 NAME = so_long
 
 SRC_DIR = FIGHTERS
-SRC =	$(SRC_DIR)/engine.c \
+SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/map.c \
 		$(SRC_DIR)/movement.c \
 		$(SRC_DIR)/render.c \
-		$(SRC_DIR)/validation.c
+		$(SRC_DIR)/validation.c \
+		$(SRC_DIR)/support_1.c \
+		$(SRC_DIR)/support_2.c 
 
 OBJ = $(SRC:.c=.o)
 

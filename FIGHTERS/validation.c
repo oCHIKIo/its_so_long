@@ -6,7 +6,7 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 03:45:23 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/20 02:03:49 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/20 08:19:26 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,14 +100,14 @@ static int can_reach_collectibles_and_exit(t_game *game)
     // Check if all collectibles are reachable (if any exist)
     if (collectibles_reached != total_collectibles)
     {
-        ft_printf("Error: Player cannot reach all collectibles\n");
+        ft_printf("\033[1;35mError: Player cannot reach all collectibles\033[0m\n");
         return (0);
     }
 
     // Check if the exit is reachable
     if (exit_reached != 1)
     {
-        ft_printf("Error: Player cannot reach the exit\n");
+        ft_printf("\033[1;35mError: Player cannot reach the exit\033[0m\n");
         return (0);
     }
 
@@ -126,11 +126,11 @@ int validate_map(t_game *game)
         if (game->map[y][0] == '\0')
         {
             if (y == 0)
-                ft_printf("Error: Empty line at the top of the map\n");
+                ft_printf("\033[1;35mError: Empty line at the top of the map\033[0m\n");
             else if (y == game->height - 1)
-                ft_printf("Error: Empty line at the end of the map\n");
+                ft_printf("\033[1;35mError: Empty line at the end of the map\033[0m\n");
             else
-                ft_printf("Error: Empty line in the middle of the map\n");
+                ft_printf("\033[1;35mError: Empty line in the middle of the map\033[0m\n");
             return (0);
         }
         y++;
@@ -145,12 +145,12 @@ int validate_map(t_game *game)
         {
             if ((y == 0 || y == game->height - 1) && game->map[y][x] != '1')
             {
-                ft_printf("Error: Top or bottom wall is not fully '1'\n");
+                ft_printf("\033[1;35mError: Top or bottom wall is not fully '1'\033[0m\n");
                 return (0);
             }
             if ((x == 0 || x == game->width - 1) && game->map[y][x] != '1')
             {
-                ft_printf("Error: Left or right wall is not fully '1'\n");
+                ft_printf("\033[1;35mError: Left or right wall is not fully '1'\033[0m\n");
                 return (0);
             }
             x++;
@@ -161,7 +161,7 @@ int validate_map(t_game *game)
     // Check for all walls
     if (is_all_walls(game))
     {
-        ft_printf("Error: Map contains only walls\n");
+        ft_printf("\033[1;35mError: Map contains only walls\033[0m\n");
         return (0);
     }
 
@@ -184,7 +184,7 @@ int validate_map(t_game *game)
                 c_count++;
             else if (game->map[y][x] != '0' && game->map[y][x] != '1')
             {
-                ft_printf("Error: Invalid character '%c' in map\n", game->map[y][x]);
+                ft_printf("\033[1;35mError: Invalid character '%c' in map\033[0m\n", game->map[y][x]);
                 return (0);
             }
             x++;
@@ -195,12 +195,12 @@ int validate_map(t_game *game)
     // Check component counts
     if (p_count != 1)
     {
-        ft_printf("Error: Map must have exactly one player (P)\n");
+        ft_printf("\033[1;35mError: Map must have exactly one player (P)\033[0m\n");
         return (0);
     }
     if (e_count != 1)
     {
-        ft_printf("Error: Map must have exactly one exit (E)\n");
+        ft_printf("\033[1;35mError: Map must have exactly one exit (E)\033[0m\n");
         return (0);
     }
     // Removed the requirement for at least one collectible
@@ -218,7 +218,7 @@ int validate_map(t_game *game)
             game->map[game->player_y][game->player_x - 1] == '1' &&
             game->map[game->player_y][game->player_x + 1] == '1')
         {
-            ft_printf("Error: Player is completely surrounded by walls\n");
+            ft_printf("\033[1;35mError: Player is completely surrounded by walls noobie\033[0m\n");
             return (0);
         }
     }

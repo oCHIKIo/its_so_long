@@ -6,7 +6,7 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 01:08:25 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/19 18:01:09 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/20 02:39:16 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ typedef struct s_game
     int         moves;
     int         collectibles;
     void        *current_player_tex;
+    int         won; // New flag to track if the player won
 } t_game;
 
 void    render_map(t_game *game);

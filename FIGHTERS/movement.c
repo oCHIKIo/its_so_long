@@ -6,11 +6,13 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 03:44:25 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/19 18:03:38 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/20 02:51:57 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../so_long.h"
+
+void cleanup_and_exit(t_game *game);
 
 void count_collectibles(t_game *game)
 {
@@ -41,10 +43,24 @@ void move_player(t_game *game, int dx, int dy)
         game->map[new_y][new_x] != '1')
     {
         if (game->map[new_y][new_x] == 'C')
+        {
             game->collectibles--;
-        if (game->map[new_y][new_x] == 'E' && game->collectibles == 0)
-            close_window(game);
-        else if (game->map[new_y][new_x] != 'E')
+            game->map[new_y][new_x] = '0'; // Clear the collectible
+        }
+        if (game->map[new_y][new_x] == 'E')
+        {
+            if (game->collectibles == 0) // Only allow exiting if all collectibles are gathered
+            {
+                game->won = 1; // Set the won flag to indicate the player won
+                close_window(game);
+            }
+            else
+            {
+                ft_printf("\033[1;35mYou need to collect all items first! 🐺\033[0m\n");
+                return; // Don't move the player onto the exit
+            }
+        }
+        else
         {
             game->map[game->player_y][game->player_x] = '0';
             game->player_x = new_x;
@@ -80,6 +96,13 @@ int key_hook(int keycode, t_game *game)
         move_player(game, 1, 0);
     }
     else if (keycode == 65307) // ESC
-        close_window(game);
+    {
+        // Print the exit message in purple and exit immediately without delay
+        if (!game->won)
+        {
+            ft_printf("\033[1;35mWhy did you leave, bro? 🐺\033[0m\n");
+        }
+        cleanup_and_exit(game);
+    }
     return (0);
 }

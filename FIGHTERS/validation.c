@@ -6,9 +6,10 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 03:45:23 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/19 18:03:07 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/20 02:03:49 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../so_long.h"
 
@@ -32,30 +33,30 @@ static int is_all_walls(t_game *game)
     return (1);
 }
 
-static void flood_fill(t_game *game, int x, int y, int *collectibles_reached, char **visited)
+static void flood_fill(t_game *game, int x, int y, int *collectibles_reached, int *exit_reached, char **visited)
 {
     if (x < 0 || x >= game->width || y < 0 || y >= game->height || visited[y][x] || game->map[y][x] == '1')
         return;
     visited[y][x] = 1;
     if (game->map[y][x] == 'C')
         (*collectibles_reached)++;
-    flood_fill(game, x + 1, y, collectibles_reached, visited);
-    flood_fill(game, x - 1, y, collectibles_reached, visited);
-    flood_fill(game, x, y + 1, collectibles_reached, visited);
-    flood_fill(game, x, y - 1, collectibles_reached, visited);
+    if (game->map[y][x] == 'E')
+        (*exit_reached)++;
+    flood_fill(game, x + 1, y, collectibles_reached, exit_reached, visited);
+    flood_fill(game, x - 1, y, collectibles_reached, exit_reached, visited);
+    flood_fill(game, x, y + 1, collectibles_reached, exit_reached, visited);
+    flood_fill(game, x, y - 1, collectibles_reached, exit_reached, visited);
 }
 
-static int can_reach_collectibles(t_game *game)
+static int can_reach_collectibles_and_exit(t_game *game)
 {
     char **visited;
-    int collectibles_reached;
-    int total_collectibles;
-    int x;
-    int y;
+    int collectibles_reached = 0;
+    int exit_reached = 0;
+    int total_collectibles = 0;
+    int x, y;
 
-    collectibles_reached = 0;
-    total_collectibles = 0;
-
+    // Count total collectibles
     y = 0;
     while (y < game->height)
     {
@@ -69,6 +70,7 @@ static int can_reach_collectibles(t_game *game)
         y++;
     }
 
+    // Allocate visited array
     visited = malloc(sizeof(char *) * game->height);
     y = 0;
     while (y < game->height)
@@ -83,8 +85,10 @@ static int can_reach_collectibles(t_game *game)
         y++;
     }
 
-    flood_fill(game, game->player_x, game->player_y, &collectibles_reached, visited);
+    // Perform flood-fill from player's position
+    flood_fill(game, game->player_x, game->player_y, &collectibles_reached, &exit_reached, visited);
 
+    // Free visited array
     y = 0;
     while (y < game->height)
     {
@@ -93,20 +97,27 @@ static int can_reach_collectibles(t_game *game)
     }
     free(visited);
 
-    return (collectibles_reached == total_collectibles);
+    // Check if all collectibles are reachable (if any exist)
+    if (collectibles_reached != total_collectibles)
+    {
+        ft_printf("Error: Player cannot reach all collectibles\n");
+        return (0);
+    }
+
+    // Check if the exit is reachable
+    if (exit_reached != 1)
+    {
+        ft_printf("Error: Player cannot reach the exit\n");
+        return (0);
+    }
+
+    return (1);
 }
 
 int validate_map(t_game *game)
 {
-    int x;
-    int y;
-    int p_count;
-    int e_count;
-    int c_count;
-
-    p_count = 0;
-    e_count = 0;
-    c_count = 0;
+    int x, y;
+    int p_count = 0, e_count = 0, c_count = 0;
 
     // Check for empty lines
     y = 0;
@@ -192,11 +203,12 @@ int validate_map(t_game *game)
         ft_printf("Error: Map must have exactly one exit (E)\n");
         return (0);
     }
-    if (c_count < 1)
-    {
-        ft_printf("Error: Map must have at least one collectible (C)\n");
-        return (0);
-    }
+    // Removed the requirement for at least one collectible
+    // if (c_count < 1)
+    // {
+    //     ft_printf("Error: Map must have at least one collectible (C)\n");
+    //     return (0);
+    // }
 
     // Check if player is surrounded
     if (game->player_x > 0 && game->player_x < game->width - 1 && game->player_y > 0 && game->player_y < game->height - 1)
@@ -211,12 +223,9 @@ int validate_map(t_game *game)
         }
     }
 
-    // Check reachability
-    if (!can_reach_collectibles(game))
-    {
-        ft_printf("Error: Player cannot reach all collectibles\n");
+    // Check reachability of collectibles and exit
+    if (!can_reach_collectibles_and_exit(game))
         return (0);
-    }
 
     return (1);
 }

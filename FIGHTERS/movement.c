@@ -6,13 +6,11 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 03:44:25 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/20 02:51:57 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/20 03:50:12 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../so_long.h"
-
-void cleanup_and_exit(t_game *game);
 
 void count_collectibles(t_game *game)
 {
@@ -77,22 +75,22 @@ int key_hook(int keycode, t_game *game)
 {
     if (keycode == 119) // W
     {
-        game->current_player_tex = game->tex.player_back;
+        game->current_player_tex = game->tex.player_looking_back;
         move_player(game, 0, -1);
     }
     else if (keycode == 97) // A
     {
-        game->current_player_tex = game->tex.player_left;
+        game->current_player_tex = game->tex.player_looking_left;
         move_player(game, -1, 0);
     }
     else if (keycode == 115) // S
     {
-        game->current_player_tex = game->tex.player_right;
+        game->current_player_tex = game->tex.player_looking_direct;
         move_player(game, 0, 1);
     }
     else if (keycode == 100) // D
     {
-        game->current_player_tex = game->tex.player_right;
+        game->current_player_tex = game->tex.player_looking_right;
         move_player(game, 1, 0);
     }
     else if (keycode == 65307) // ESC

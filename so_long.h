@@ -6,11 +6,11 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 01:08:25 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/20 02:39:16 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/20 04:13:00 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define TILE_SIZE 50
+#define TILE_SIZE 40
 #ifndef SO_LONG_H
 # define SO_LONG_H
 
@@ -26,12 +26,14 @@ typedef struct s_textures
 {
     void    *wall;
     void    *floor;
-    void    *player_right;
-    void    *player_left;
-    void    *player_back;
+    void    *player_looking_right;
+    void    *player_looking_left;
+    void    *player_looking_back;
+    void    *player_looking_direct;
     void    *collectible;
     void    *exit;
     void    *exit_open;
+    void    *in_top_of_exit; 
 } t_textures;
 
 typedef struct s_game
@@ -47,7 +49,7 @@ typedef struct s_game
     int         moves;
     int         collectibles;
     void        *current_player_tex;
-    int         won; // New flag to track if the player won
+    int         won;
 } t_game;
 
 void    render_map(t_game *game);
@@ -58,5 +60,6 @@ void    count_collectibles(t_game *game);
 int     key_hook(int keycode, t_game *game);
 void    parse_map(t_game *game, char *filename);
 void    move_player(t_game *game, int dx, int dy);
+void    cleanup_and_exit(t_game *game);
 
 #endif

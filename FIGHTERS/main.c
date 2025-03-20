@@ -5,14 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/10 01:08:10 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/20 02:51:16 by bchiki           ###   ########.fr       */
+/*   Created: 2025/03/20 03:46:05 by bchiki            #+#    #+#             */
+/*   Updated: 2025/03/20 04:07:12 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../so_long.h"
 
-static void cleanup_and_exit(t_game *game)
+void cleanup_and_exit(t_game *game)
 {
     int x;
 
@@ -21,27 +21,27 @@ static void cleanup_and_exit(t_game *game)
         mlx_destroy_image(game->mlx, game->tex.wall);
     if (game->tex.floor)
         mlx_destroy_image(game->mlx, game->tex.floor);
-    if (game->tex.player_right)
-        mlx_destroy_image(game->mlx, game->tex.player_right);
-    if (game->tex.player_left)
-        mlx_destroy_image(game->mlx, game->tex.player_left);
-    if (game->tex.player_back)
-        mlx_destroy_image(game->mlx, game->tex.player_back);
+    if (game->tex.player_looking_right)
+        mlx_destroy_image(game->mlx, game->tex.player_looking_right);
+    if (game->tex.player_looking_left)
+        mlx_destroy_image(game->mlx, game->tex.player_looking_left);
+    if (game->tex.player_looking_back)
+        mlx_destroy_image(game->mlx, game->tex.player_looking_back);
+    if (game->tex.player_looking_direct)
+        mlx_destroy_image(game->mlx, game->tex.player_looking_direct);
     if (game->tex.collectible)
         mlx_destroy_image(game->mlx, game->tex.collectible);
     if (game->tex.exit)
         mlx_destroy_image(game->mlx, game->tex.exit);
     if (game->tex.exit_open)
         mlx_destroy_image(game->mlx, game->tex.exit_open);
-
-    // Destroy window and display
+    if (game->tex.in_top_of_exit)
+        mlx_destroy_image(game->mlx, game->tex.in_top_of_exit);
     if (game->win)
         mlx_destroy_window(game->mlx, game->win);
     if (game->mlx)
         mlx_destroy_display(game->mlx);
     free(game->mlx);
-
-    // Free map
     x = 0;
     while (x < game->height)
     {
@@ -49,26 +49,16 @@ static void cleanup_and_exit(t_game *game)
         x++;
     }
     free(game->map);
-
     exit(0);
 }
 
 int close_window(t_game *game)
 {
-    // Print appropriate message in purple based on whether the player won
     if (game->won)
-    {
-        ft_printf("\033[1;35m🎉 Congrats, You Won! 🐺\033[0m\n");
-    }
+        ft_printf("\033[1;35mCongrats, you won noobie! :) 🐺\033[0m\n");
     else
-    {
         ft_printf("\033[1;35mWhy did you leave, bro? 🐺\033[0m\n");
-    }
-
-    // Add a 2-second delay for win or window close scenarios
-    usleep(2000000); // 2 seconds (2,000,000 microseconds)
-
-    // Clean up and exit
+    usleep(2000000); 
     cleanup_and_exit(game);
     return (0); // This line is never reached due to exit(0), but included for clarity
 }
@@ -118,7 +108,7 @@ int main(int argc, char **argv)
         return (1);
     }
     load_textures(&game);
-    if (!game.tex.wall || !game.tex.floor || !game.tex.player_right || !game.tex.player_left || !game.tex.player_back || !game.tex.collectible || !game.tex.exit || !game.tex.exit_open)
+    if (!game.tex.wall || !game.tex.floor || !game.tex.player_looking_right || !game.tex.player_looking_left || !game.tex.player_looking_back || !game.tex.player_looking_direct || !game.tex.collectible || !game.tex.exit || !game.tex.exit_open || !game.tex.in_top_of_exit)
     {
         ft_printf("Error: One or more textures failed to load\n");
         mlx_destroy_window(game.mlx, game.win);
@@ -131,7 +121,7 @@ int main(int argc, char **argv)
         free(game.map);
         exit(1);
     }
-    game.current_player_tex = game.tex.player_right; 
+    game.current_player_tex = game.tex.player_looking_right; 
     game.won = 0; // Initialize won flag to 0
     render_map(&game);
     ft_printf("\033[1;33mGame Is Successfully Launched 🐺\033[0m\n");

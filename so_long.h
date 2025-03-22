@@ -5,28 +5,32 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/10 01:08:25 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/20 08:49:57 by bchiki           ###   ########.fr       */
+/*   Created: 2025/03/21 18:09:54 by bchiki            #+#    #+#             */
+/*   Updated: 2025/03/22 01:15:11 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define TILE_SIZE 40
 #ifndef SO_LONG_H
 # define SO_LONG_H
 
+# include "../not_your_libft/libft.h"
+# include "../not_your_printf/ft_printf.h"
+# include "../minilibx-linux/mlx.h"
 # include <fcntl.h>
-# include <stdio.h>
-# include <unistd.h>
 # include <stdlib.h>
-# include <string.h>
-# include "minilibx-linux/mlx.h"
-# include "not_your_printf/ft_printf.h"
+# include <unistd.h>
+# include <stdio.h>
+# include <sys/time.h>
 
-typedef struct t_nbr
+# define TILE_SIZE 40
+
+typedef struct s_nbr
 {
-    int x;
-    int y;
-}              t_nbr;
+    int     x;
+    int     y;
+    int     fd;
+    int     bytes;
+} t_nbr;
 
 typedef struct s_textures
 {
@@ -42,6 +46,14 @@ typedef struct s_textures
     void    *in_top_of_exit;
 } t_textures;
 
+typedef struct s_keys
+{
+    int     w_pressed; 
+    int     a_pressed; 
+    int     s_pressed; 
+    int     d_pressed; 
+} t_keys;
+
 typedef struct s_game
 {
     void        *mlx;
@@ -49,41 +61,35 @@ typedef struct s_game
     char        **map;
     int         width;
     int         height;
-    t_textures  tex;
     int         player_x;
     int         player_y;
-    int         exit_x; 
-    int         exit_y; 
-    int         moves;
+    int         exit_x;
+    int         exit_y;
     int         collectibles;
-    void        *current_player_tex;
+    int         moves;
     int         won;
     int         tried_to_exit;
+    void        *current_player_tex;
+    t_textures  tex;
+    t_keys      keys; // Added to track key states
+    long int    last_move_time; // Fixed: Changed 'long' to 'long int' and removed '+'
 } t_game;
 
-
-/* Functions in main.c */
-void    free_map(t_game *game);
-int     close_window(t_game *game);
-void    cleanup_and_exit(t_game *game);
-void    free_map_on_error(t_game *game);
-void    destroy_window_and_display(t_game *game);
-int     validate_arguments(int argc, char **argv);
-int find_exit_position(t_game *game);
-int     initialize_map(t_game *game, char *filename);
-int     parse_and_validate_map(t_game *game, char *filename);
-
-/* Functions in render.c */
+void    parse_map(t_game *game, char *filename);
 void    render_map(t_game *game);
 void    load_textures(t_game *game);
-
-/* Functions in map.c */
-int     validate_map(t_game *game);
-void    parse_map(t_game *game, char *filename);
-
-/* Functions in movement.c */
-void    count_collectibles(t_game *game);
 int     key_hook(int keycode, t_game *game);
+int     count_collectibles(t_game *game);
 void    move_player(t_game *game, int dx, int dy);
+void    destroy_textures(t_game *game);
+void    destroy_window_and_display(t_game *game);
+void    free_map(t_game *game);
+void    free_map_on_error(t_game *game);
+void    cleanup_and_exit(t_game *game);
+int key_press(int keycode, t_game *game);
+int key_release(int keycode, t_game *game);
+int update_game(t_game *game);
+int     close_window(t_game *game);
+int     validate_map(t_game *game); // Added prototype for validate_map
 
 #endif

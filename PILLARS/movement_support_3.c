@@ -6,13 +6,13 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 01:16:09 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/22 01:17:06 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/22 02:17:23 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../so_long.h"
 
-static void handle_movement_keys(int keycode, t_game *game)
+void handle_movement_keys(int keycode, t_game *game)
 {
     if (keycode == 119) // W
     {

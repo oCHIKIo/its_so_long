@@ -1,32 +1,50 @@
 NAME = so_long
 
 SRC_DIR = FIGHTERS
+PILLARS_DIR = PILLARS
 LIBFT_DIR = not_your_libft
+PRINTF_DIR = not_your_printf
+MLX_DIR = minilibx-linux
 
 SRC =	$(SRC_DIR)/main.c \
 		$(SRC_DIR)/map.c \
 		$(SRC_DIR)/movement.c \
 		$(SRC_DIR)/render.c \
-		$(SRC_DIR)/validation.c
-
+		$(SRC_DIR)/validation.c \
+		$(PILLARS_DIR)/main_support_1.c \
+		$(PILLARS_DIR)/main_support_2.c \
+		$(PILLARS_DIR)/main_support_3.c \
+		$(PILLARS_DIR)/map_support_1.c \
+		$(PILLARS_DIR)/map_support_2.c \
+		$(PILLARS_DIR)/map_support_3.c \
+		$(PILLARS_DIR)/movement_support_1.c \
+		$(PILLARS_DIR)/movement_support_2.c \
+		$(PILLARS_DIR)/movement_support_3.c \
+		$(PILLARS_DIR)/render_support_1.c \
+		$(PILLARS_DIR)/validation_support_1.c \
+		$(PILLARS_DIR)/validation_support_2.c \
+		$(PILLARS_DIR)/validation_support_3.c \
+		$(PILLARS_DIR)/validation_support_4.c \
+		$(PILLARS_DIR)/validation_support_5.c
+		
 OBJ = $(SRC:.c=.o)
 
-MLX_DIR = minilibx-linux
-MLX_LIB = -L$(MLX_DIR) -lmlx
-
+MLX_LIB = $(MLX_DIR)/libmlx.a
 LIBFT_LIB = $(LIBFT_DIR)/libft.a
-PRINTF_DIR = not_your_printf
 PRINTF_LIB = $(PRINTF_DIR)/libftprintf.a
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -I$(MLX_DIR) -I$(PRINTF_DIR) -I$(LIBFT_DIR)
-LDFLAGS = $(MLX_LIB) -L$(LIBFT_DIR) -lft -L$(PRINTF_DIR) -lftprintf -lXext -lX11 -lm
+LDFLAGS = -L$(MLX_DIR) -lmlx -L$(LIBFT_DIR) -lft -L$(PRINTF_DIR) -lftprintf -lXext -lX11 -lm
 
 REBUILDING = 0
 
 all: $(NAME)
 
-$(NAME): $(LIBFT_LIB) $(PRINTF_LIB) $(OBJ)
+$(MLX_LIB):
+	@make -s -C $(MLX_DIR) > /dev/null 2>&1
+
+$(NAME): $(MLX_LIB) $(LIBFT_LIB) $(PRINTF_LIB) $(OBJ)
 	@$(CC) $(OBJ) $(LDFLAGS) -o $(NAME)
 	@if [ $(REBUILDING) -eq 0 ] && { [ "$(MAKECMDGOALS)" = "all" ] || [ "$(MAKECMDGOALS)" = "" ]; }; then \
 		printf "\033[1;32m🐺 So_long Built Successfully! 🐺\033[0m\n"; \
@@ -45,6 +63,7 @@ clean:
 	@rm -f $(OBJ)
 	@make -s -C $(LIBFT_DIR) clean > /dev/null 2>&1
 	@make -s -C $(PRINTF_DIR) clean > /dev/null 2>&1
+	@make -s -C $(MLX_DIR) clean > /dev/null 2>&1
 	@if [ $(REBUILDING) -eq 0 ] && [ "$(MAKECMDGOALS)" = "clean" ]; then \
 		printf "\033[1;31m🐺 Cleaned Successfully! 🐺\033[0m\n"; \
 	fi
@@ -53,6 +72,7 @@ fclean: clean
 	@rm -f $(NAME)
 	@make -s -C $(LIBFT_DIR) fclean > /dev/null 2>&1
 	@make -s -C $(PRINTF_DIR) fclean > /dev/null 2>&1
+	@make -s -C $(MLX_DIR) clean > /dev/null 2>&1
 	@if [ $(REBUILDING) -eq 0 ] && [ "$(MAKECMDGOALS)" = "fclean" ]; then \
 		printf "\033[1;33m🐺 Force Cleaned Successfully! 🐺\033[0m\n"; \
 	fi

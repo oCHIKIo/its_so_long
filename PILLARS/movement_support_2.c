@@ -6,7 +6,7 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 01:13:27 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/22 01:14:59 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/22 02:17:20 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void update_and_render(t_game *game, int new_x, int new_y)
     render_map(game);
 }
 
-static long get_current_time(void)
+long get_current_time(void)
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);

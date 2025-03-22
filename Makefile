@@ -1,86 +1,45 @@
 NAME = so_long
-
-SRC_DIR = FIGHTERS
-PILLARS_DIR = PILLARS
-LIBFT_DIR = not_your_libft
-PRINTF_DIR = not_your_printf
-MLX_DIR = minilibx-linux
-
-SRC =	$(SRC_DIR)/main.c \
-		$(SRC_DIR)/map.c \
-		$(SRC_DIR)/movement.c \
-		$(SRC_DIR)/render.c \
-		$(SRC_DIR)/validation.c \
-		$(PILLARS_DIR)/main_support_1.c \
-		$(PILLARS_DIR)/main_support_2.c \
-		$(PILLARS_DIR)/main_support_3.c \
-		$(PILLARS_DIR)/main_support_4.c \
-		$(PILLARS_DIR)/map_support_1.c \
-		$(PILLARS_DIR)/map_support_2.c \
-		$(PILLARS_DIR)/map_support_3.c \
-		$(PILLARS_DIR)/movement_support_1.c \
-		$(PILLARS_DIR)/movement_support_2.c \
-		$(PILLARS_DIR)/movement_support_3.c \
-		$(PILLARS_DIR)/render_support_1.c \
-		$(PILLARS_DIR)/validation_support_1.c \
-		$(PILLARS_DIR)/validation_support_2.c \
-		$(PILLARS_DIR)/validation_support_3.c \
-		$(PILLARS_DIR)/validation_support_4.c \
-		$(PILLARS_DIR)/validation_support_5.c
-		
-OBJ = $(SRC:.c=.o)
-
-MLX_LIB = $(MLX_DIR)/libmlx.a
-LIBFT_LIB = $(LIBFT_DIR)/libft.a
-PRINTF_LIB = $(PRINTF_DIR)/libftprintf.a
-
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I$(MLX_DIR) -I$(PRINTF_DIR) -I$(LIBFT_DIR)
-LDFLAGS = -L$(MLX_DIR) -lmlx -L$(LIBFT_DIR) -lft -L$(PRINTF_DIR) -lftprintf -lXext -lX11 -lm
+CFLAGS = -Wall -Wextra -Werror
+MLX_PATH = /usr/include/minilibx-linux
+MLXFLAGS = -L$(MLX_PATH) -lmlx_Linux -lXext -lX11
+LIBFT = not_your_libft/libft.a
+PRINTF = not_your_printf/libftprintf.a
 
-REBUILDING = 0
+SRCS = main.c map.c graphics.c movement.c validation.c
+OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 
-$(MLX_LIB):
-	@make -s -C $(MLX_DIR) > /dev/null 2>&1
-
-$(NAME): $(MLX_LIB) $(LIBFT_LIB) $(PRINTF_LIB) $(OBJ)
-	@$(CC) $(OBJ) $(LDFLAGS) -o $(NAME)
-	@if [ $(REBUILDING) -eq 0 ] && { [ "$(MAKECMDGOALS)" = "all" ] || [ "$(MAKECMDGOALS)" = "" ]; }; then \
-		printf "\033[1;32m🐺 So_long Built Successfully! 🐺\033[0m\n"; \
+$(NAME): $(OBJS) $(LIBFT) $(PRINTF)
+	@echo "Linking with MLX from $(MLX_PATH)..."
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LIBFT) $(PRINTF) $(MLXFLAGS)
+	@if [ $$? -ne 0 ]; then \
+		echo "Linker failed. Checking MLX and libft setup:"; \
+		ls -l $(MLX_PATH)/libmlx* 2>/dev/null || echo "MLX files not found"; \
+		ar t $(LIBFT) | grep ft_strcmp || echo "ft_strcmp not in libft.a"; \
+		exit 1; \
 	fi
 
-%.o: %.c so_long.h $(LIBFT_DIR)/libft.h
-	@$(CC) $(CFLAGS) -c $< -o $@
+%.o: %.c
+	$(CC) $(CFLAGS) -I$(MLX_PATH) -c $< -o $@
 
-$(LIBFT_LIB): $(LIBFT_DIR)/libft.h
-	@make -s -C $(LIBFT_DIR) > /dev/null 2>&1
+$(LIBFT):
+	make -C not_your_libft
 
-$(PRINTF_LIB):
-	@make -s -C $(PRINTF_DIR) > /dev/null 2>&1
+$(PRINTF):
+	make -C not_your_printf
 
 clean:
-	@rm -f $(OBJ)
-	@make -s -C $(LIBFT_DIR) clean > /dev/null 2>&1
-	@make -s -C $(PRINTF_DIR) clean > /dev/null 2>&1
-	@make -s -C $(MLX_DIR) clean > /dev/null 2>&1
-	@if [ $(REBUILDING) -eq 0 ] && [ "$(MAKECMDGOALS)" = "clean" ]; then \
-		printf "\033[1;31m🐺 Cleaned Successfully! 🐺\033[0m\n"; \
-	fi
+	rm -f $(OBJS)
+	make -C not_your_libft clean
+	make -C not_your_printf clean
 
 fclean: clean
-	@rm -f $(NAME)
-	@make -s -C $(LIBFT_DIR) fclean > /dev/null 2>&1
-	@make -s -C $(PRINTF_DIR) fclean > /dev/null 2>&1
-	@make -s -C $(MLX_DIR) clean > /dev/null 2>&1
-	@if [ $(REBUILDING) -eq 0 ] && [ "$(MAKECMDGOALS)" = "fclean" ]; then \
-		printf "\033[1;33m🐺 Force Cleaned Successfully! 🐺\033[0m\n"; \
-	fi
+	rm -f $(NAME)
+	make -C not_your_libft fclean
+	make -C not_your_printf fclean
 
-re:
-	@$(MAKE) --no-print-directory fclean REBUILDING=1
-	@$(MAKE) --no-print-directory all REBUILDING=1
-	@printf "\033[1;34m🐺 Rebuilt Successfully! 🐺\033[0m\n"
+re: fclean all
 
 .PHONY: all clean fclean re

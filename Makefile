@@ -14,6 +14,7 @@ SRC =	$(SRC_DIR)/main.c \
 		$(PILLARS_DIR)/main_support_1.c \
 		$(PILLARS_DIR)/main_support_2.c \
 		$(PILLARS_DIR)/main_support_3.c \
+		$(PILLARS_DIR)/main_support_4.c \
 		$(PILLARS_DIR)/map_support_1.c \
 		$(PILLARS_DIR)/map_support_2.c \
 		$(PILLARS_DIR)/map_support_3.c \

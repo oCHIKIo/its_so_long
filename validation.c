@@ -6,44 +6,70 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 17:52:54 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/22 21:09:34 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/23 00:29:48 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-static t_flood flood_fill(char *map, t_game *game, t_flood state)
+static void update_state(t_flood *state, t_flood new_state)
+{
+    state->collectibles = new_state.collectibles;
+    state->exit = new_state.exit;
+}
+
+static int is_valid_position(t_flood state, int x, int y, char *map)
+{
+    if (x < 0 || x >= state.width || y < 0 || y >= state.height)
+        return (0);
+    
+    int pos = y * (state.width + 1) + x;
+    if (map[pos] == '1' || map[pos] == 'X')
+        return (0);
+    
+    return (1);
+}
+
+static t_flood check_cell(char *map, t_flood state)
 {
     int pos = state.y * (state.width + 1) + state.x;
-
-    if (state.x < 0 || state.x >= state.width || state.y < 0 || state.y >= state.height || map[pos] == '1' || map[pos] == 'X')
-        return (state);
-
+    
     if (map[pos] == 'C')
         state.collectibles--;
     if (map[pos] == 'E')
         state.exit = 1;
+    
     map[pos] = 'X';
-
-    t_flood left = flood_fill(map, game, (t_flood){state.x - 1, state.y, state.collectibles, state.exit, state.width, state.height});
-    state.collectibles = left.collectibles;
-    state.exit = left.exit;
-
-    t_flood right = flood_fill(map, game, (t_flood){state.x + 1, state.y, state.collectibles, state.exit, state.width, state.height});
-    state.collectibles = right.collectibles;
-    state.exit = right.exit;
-
-    t_flood up = flood_fill(map, game, (t_flood){state.x, state.y - 1, state.collectibles, state.exit, state.width, state.height});
-    state.collectibles = up.collectibles;
-    state.exit = up.exit;
-
-    t_flood down = flood_fill(map, game, (t_flood){state.x, state.y + 1, state.collectibles, state.exit, state.width, state.height});
-    state.collectibles = down.collectibles;
-    state.exit = down.exit;
-
     return (state);
 }
 
+static t_flood flood_fill(char *map, t_game *game, t_flood state)
+{
+    if (!is_valid_position(state, state.x, state.y, map))
+        return (state);
+    
+    state = check_cell(map, state);
+    
+    t_flood new_state;
+    
+    new_state = flood_fill(map, game, (t_flood){state.x - 1, state.y, 
+        state.collectibles, state.exit, state.width, state.height});
+    update_state(&state, new_state);
+    new_state = flood_fill(map, game, (t_flood){state.x + 1, state.y,
+        state.collectibles, state.exit, state.width, state.height});
+    update_state(&state, new_state);
+    new_state = flood_fill(map, game, (t_flood){state.x, state.y - 1,
+        state.collectibles, state.exit, state.width, state.height});
+    update_state(&state, new_state);
+    new_state = flood_fill(map, game, (t_flood){state.x, state.y + 1,
+        state.collectibles, state.exit, state.width, state.height});
+    update_state(&state, new_state);
+    return (state);
+}
+
+
+/*************************************************************** */
+/***************************************************************** */
 int     check_walls(t_game *game)
 {
     int i = 0;

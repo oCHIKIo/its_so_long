@@ -6,7 +6,7 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 17:52:48 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/22 21:55:38 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/23 00:27:34 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,49 +34,73 @@ int     key_press(int key, t_game *game)
         move_player(game, 1, 0);
     return (0);
 }
+/************************************************************************/
+/************************************************************************/
+/************************************************************************/
+/************************************************************************/
 
-void    move_player(t_game *game, int dx, int dy)
+static void init_move(t_game *game, t_move *move, int dx, int dy)
 {
-    int new_x = game->player_x + dx;
-    int new_y = game->player_y + dy;
-    int new_pos = new_y * (game->width + 1) + new_x;
-    int old_pos = game->player_y * (game->width + 1) + game->player_x;
-    
-    if (game->map[new_pos] != '1')
+    move->new_x = game->player_x + dx;
+    move->new_y = game->player_y + dy;
+    move->new_pos = move->new_y * (game->width + 1) + move->new_x;
+    move->old_pos = game->player_y * (game->width + 1) + game->player_x;
+}
+
+static int check_exit(t_game *game, t_move *move)
+{
+    if (game->collectibles > 0)
     {
-        if (game->map[new_pos] == 'E')
+        ft_printf("Collect all items first!\n");
+        game->player_x = move->new_x;
+        game->player_y = move->new_y;
+        return (0);
+    }
+    ft_printf("Moves: %d\nYou won, nice one!\n", game->moves);
+    close_window(game);
+    return (1);
+}
+
+static void update_move(t_game *game, t_move *move)
+{
+    game->moves++;
+    ft_printf("Moves: %d\n", game->moves);
+    if (game->map[move->new_pos] == 'C')
+        game->collectibles--;
+    if (game->map[move->old_pos] != 'E')
+        game->map[move->old_pos] = '0';
+    if (game->map[move->new_pos] != 'E')
+        game->map[move->new_pos] = 'P';
+    game->player_x = move->new_x;
+    game->player_y = move->new_y;
+}
+
+void move_player(t_game *game, int dx, int dy)
+{
+    t_move move;
+    init_move(game, &move, dx, dy);
+    if (game->map[move.new_pos] != '1')
+    {
+        if (game->map[move.new_pos] == 'E')
         {
-            if (game->collectibles > 0)
-            {
-                ft_printf("Collect all items first!\n");
-                game->player_x = new_x;
-                game->player_y = new_y;
-            }
-            else
-            {
-                ft_printf("Moves: %d\nYou won, nice one!\n", game->moves);
-                close_window(game);
-            }
+            if (check_exit(game, &move))
+                return;
         }
         else
-        {
-            game->moves++;
-            ft_printf("Moves: %d\n", game->moves);
-            if (game->map[new_pos] == 'C')
-                game->collectibles--;
-            if (game->map[old_pos] != 'E')
-                game->map[old_pos] = '0';
-            if (game->map[new_pos] != 'E')
-                game->map[new_pos] = 'P';
-            game->player_x = new_x;
-            game->player_y = new_y;
-        }
+            update_move(game, &move);
         game->last_dx = dx;
         game->last_dy = dy;
         update_player_texture(game, dx, dy);
         render_map(game);
     }
 }
+
+
+/************************************************************************/
+/************************************************************************/
+/************************************************************************/
+/************************************************************************/
+
 
 void    update_player_texture(t_game *game, int dx, int dy)
 {

@@ -6,7 +6,9 @@ MLXFLAGS = -L$(MLX_PATH) -lmlx_Linux -lXext -lX11
 LIBFT = not_your_libft/libft.a
 PRINTF = not_your_printf/libftprintf.a
 
-SRCS = main.c map.c graphics.c movement.c validation.c
+SRCS = FIGHTERS/main.c FIGHTERS/map.c FIGHTERS/graphics.c FIGHTERS/movement.c FIGHTERS/validation.c \
+       PILLARS/map_support.c PILLARS/map_support2.c \
+       PILLARS/graphics_support.c PILLARS/movement_support.c PILLARS/validation_support.c
 OBJS = $(SRCS:.c=.o)
 
 all: do_build

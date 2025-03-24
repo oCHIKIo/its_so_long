@@ -6,24 +6,11 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 01:11:28 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/23 05:58:16 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/24 08:45:07 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../so_long.h"
-
-int	check_final_validations(t_game *game)
-{
-	if (game->player_x == -1 || game->collectibles < 1)
-	{
-		if (game->player_x == -1)
-			ft_putstr_fd("\033[1;31mError: No player found\033[0m\n", 2);
-		else if (game->collectibles < 1)
-			ft_putstr_fd("\033[1;31mError: No collectibles found\033[0m\n", 2);
-		return (0);
-	}
-	return (check_accessibility(game));
-}
 
 int	check_end_conditions(t_game *game, int all_walls)
 {
@@ -43,18 +30,6 @@ int	check_end_conditions(t_game *game, int all_walls)
 	return (check_final_validations(game));
 }
 
-void	init_counts(t_game *game, t_count *count)
-{
-	count->i = 0;
-	count->x = 0;
-	count->y = 0;
-	count->exit_count = 0;
-	count->player_count = 0;
-	game->collectibles = 0;
-	game->player_x = -1;
-	game->exit_x = -1;
-}
-
 int	check_symbol(t_game *game, t_count *count)
 {
 	char	c;
@@ -71,34 +46,49 @@ int	check_symbol(t_game *game, t_count *count)
 	return (1);
 }
 
-int check_player_exit(t_game *game, t_count *count)
+static int	check_player(t_game *game, t_count *count, char c)
 {
-    char c;
-    c = game->map[count->i];
-    if (c == 'P')
-    {
-        count->player_count++;
-        if (count->player_count > 1)
-        {
-            game->map[count->i] = '0';
-            ft_putstr_fd("\033[1;31mError: Multiple players found\033[0m\n", 2);
-            game->collectibles = -1;
-            return (0);
-        }
-        game->player_x = count->x;
-        game->player_y = count->y;
-    }
-    else if (c == 'E')
-    {
-        count->exit_count++;
-        if (count->exit_count > 1)
-        {
-            ft_putstr_fd("\033[1;31mError: Multiple exits found\033[0m\n", 2);
-            game->collectibles = -1;
-            return (0);
-        }
-        game->exit_x = count->x;
-        game->exit_y = count->y;
-    }
-    return (1);
+	if (c == 'P')
+	{
+		count->player_count++;
+		if (count->player_count > 1)
+		{
+			game->map[count->i] = '0';
+			ft_putstr_fd("\033[1;31mError: Multiple players found\033[0m\n", 2);
+			game->collectibles = -1;
+			return (0);
+		}
+		game->player_x = count->x;
+		game->player_y = count->y;
+	}
+	return (1);
+}
+
+static int	check_map_exit(t_game *game, t_count *count, char c)
+{
+	if (c == 'E')
+	{
+		count->exit_count++;
+		if (count->exit_count > 1)
+		{
+			ft_putstr_fd("\033[1;31mError: Multiple exits found\033[0m\n", 2);
+			game->collectibles = -1;
+			return (0);
+		}
+		game->exit_x = count->x;
+		game->exit_y = count->y;
+	}
+	return (1);
+}
+
+int	check_player_exit(t_game *game, t_count *count)
+{
+	char	c;
+
+	c = game->map[count->i];
+	if (!check_player(game, count, c))
+		return (0);
+	if (!check_map_exit(game, count, c))
+		return (0);
+	return (1);
 }

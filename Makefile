@@ -3,46 +3,50 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 MLX_PATH = /usr/include/minilibx-linux
 MLXFLAGS = -L$(MLX_PATH) -lmlx_Linux -lXext -lX11
-LIBFT = not_your_libft/libft.a
-PRINTF = not_your_printf/libftprintf.a
+INCLUDES = -I$(MLX_PATH) -Ibonus -Ibonus/not_your_libft -Ibonus/not_your_printf
 
-SRCS = FIGHTERS/main.c FIGHTERS/map.c FIGHTERS/graphics.c FIGHTERS/movement.c FIGHTERS/validation.c \
-       PILLARS/map_support.c PILLARS/map_support2.c \
-       PILLARS/graphics_support.c PILLARS/movement_support.c PILLARS/validation_support.c
+LIBFT_DIR = not_your_libft
+PRINTF_DIR = not_your_printf
+LIBFT = $(LIBFT_DIR)/libft.a
+PRINTF = $(PRINTF_DIR)/libftprintf.a
+
+SRCS = source/main.c source/map.c source/graphics.c source/movement.c source/validation.c \
+       support/map_support.c support/map_support2.c support/map_support3.c \
+       support/graphics_support.c support/movement_support.c support/validation_support.c \
+       support/main_support.c
+
 OBJS = $(SRCS:.c=.o)
 
-all: do_build
+all: $(NAME)
+
+$(NAME): $(OBJS) $(LIBFT) $(PRINTF)
+	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LIBFT) $(PRINTF) $(MLXFLAGS)
 	@echo "\033[1;32m🐺 So_long Built Successfully! 🐺\033[0m"
 
-do_build: $(OBJS) $(LIBFT) $(PRINTF)
-	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LIBFT) $(PRINTF) $(MLXFLAGS)
-
 %.o: %.c
-	@$(CC) $(CFLAGS) -I$(MLX_PATH) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(LIBFT):
-	@make -s -C not_your_libft
+	@make -sC $(LIBFT_DIR)
 
 $(PRINTF):
-	@make -s -C not_your_printf
+	@make -sC $(PRINTF_DIR)
 
-clean: do_clean
+clean:
+	@rm -f $(OBJS)
+	@make -sC $(LIBFT_DIR) clean
+	@make -sC $(PRINTF_DIR) clean
 	@echo "\033[1;31m🐺 Cleaned Successfully! 🐺\033[0m"
 
-do_clean:
-	@rm -f $(OBJS)
-	@make -s -C not_your_libft clean
-	@make -s -C not_your_printf clean
-
-fclean: do_fclean
+fclean:
+	@rm -f $(NAME) $(OBJS)
+	@make -sC $(LIBFT_DIR) fclean
+	@make -sC $(PRINTF_DIR) fclean
 	@echo "\033[1;33m🐺 Force Cleaned Successfully! 🐺\033[0m"
 
-do_fclean: do_clean
-	@rm -f $(NAME)
-	@make -s -C not_your_libft fclean
-	@make -s -C not_your_printf fclean
-
-re: do_fclean do_build
+re:
+	@make -s fclean >/dev/null
+	@make -s all >/dev/null
 	@echo "\033[1;34m🐺 Rebuilt Successfully! 🐺\033[0m"
 
-.PHONY: all clean fclean re do_build do_clean do_fclean
+.PHONY: all clean fclean re

@@ -3,17 +3,16 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 MLX_PATH = /usr/include/minilibx-linux
 MLXFLAGS = -L$(MLX_PATH) -lmlx_Linux -lXext -lX11
-INCLUDES = -I$(MLX_PATH) -Ibonus -Ibonus/not_your_libft -Ibonus/not_your_printf
+INCLUDES = -I$(MLX_PATH) -Ilibft -Ift_printf
 
-LIBFT_DIR = not_your_libft
-PRINTF_DIR = not_your_printf
+LIBFT_DIR = libft
+PRINTF_DIR = ft_printf
 LIBFT = $(LIBFT_DIR)/libft.a
 PRINTF = $(PRINTF_DIR)/libftprintf.a
 
 SRCS = source/main.c source/map.c source/graphics.c source/movement.c source/validation.c \
        support/map_support.c support/map_support2.c support/map_support3.c \
-       support/graphics_support.c support/movement_support.c support/validation_support.c \
-       support/main_support.c
+       support/graphics_support.c support/movement_support.c support/validation_support.c
 
 OBJS = $(SRCS:.c=.o)
 

@@ -1,23 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main_support.c                                     :+:      :+:    :+:   */
+/*   ft_isdigit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/24 06:34:25 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/24 08:44:36 by bchiki           ###   ########.fr       */
+/*   Created: 2024/10/25 15:07:13 by bchiki            #+#    #+#             */
+/*   Updated: 2024/11/12 10:03:08 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../so_long.h"
+#include "libft.h"
 
-int	ft_strcmp_local(const char *s1, const char *s2)
+int	ft_isdigit(int x)
 {
-	while (*s1 && (*s1 == *s2))
+	if (x >= '0' && x <= '9')
 	{
-		s1++;
-		s2++;
+		return (1);
 	}
-	return (*(unsigned char *)s1 - *(unsigned char *)s2);
+	return (0);
 }

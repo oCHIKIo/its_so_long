@@ -6,7 +6,7 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 17:52:04 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/24 22:44:20 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/26 00:52:04 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@
 # include <fcntl.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include "not_your_libft/libft.h"
-# include "not_your_printf/ft_printf.h"
+# include "libft/libft.h"
+# include "ft_printf/ft_printf.h"
 # include "/usr/include/minilibx-linux/mlx.h"
 
 # define TILE_SIZE 40
 
-typedef struct t_nbr
+typedef struct s_nbr
 {
 	int		x;
 	int		y;
@@ -85,7 +85,6 @@ typedef struct s_game
 
 /* MAIN */
 int			main(int ac, char **av);
-int			ft_strcmp_local(const char *s1, const char *s2);
 
 /* MAP */
 char		*read_map(char *file);

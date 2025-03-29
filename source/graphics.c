@@ -6,7 +6,7 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 17:52:38 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/24 08:43:08 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/29 05:19:54 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	init_graphics(t_game *game)
 		exit(1);
 	}
 	game->win = mlx_new_window(game->mlx, game->width * TILE_SIZE, game->height
-			* TILE_SIZE + 1, "so_long");
+			* TILE_SIZE, "so_long");
 	if (!game->win)
 	{
 		ft_putstr_fd("\033[1;31mError: Window creation failed\033[0m\n", 2);

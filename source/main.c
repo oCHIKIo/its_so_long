@@ -6,7 +6,7 @@
 /*   By: bchiki <bchiki@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 17:52:12 by bchiki            #+#    #+#             */
-/*   Updated: 2025/03/24 08:43:39 by bchiki           ###   ########.fr       */
+/*   Updated: 2025/03/29 20:31:06 by bchiki           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,16 @@
 
 static int	check_file_extension(char *filename)
 {
-	size_t	len;
+	int	len;
 
-	len = ft_strlen(filename);
-	if (len < 4 || ft_strcmp_local(filename + len - 4, ".ber") != 0)
+	len = 0;
+	while (filename[len])
+		len++;
+	if (len < 5 || filename[len - 4] != '.' || filename[len - 3] != 'b'
+		|| filename[len - 2] != 'e' || filename[len - 1] != 'r'
+		|| filename[len - 5] == '/')
 	{
-		ft_putstr_fd("\033[1;31mError: Invalid file (must be .ber)\033[0m\n",
+		ft_putstr_fd("\033[1;31mError: File (must be .ber with a name)\033[0m\n",
 			2);
 		return (0);
 	}
@@ -78,7 +82,7 @@ int	main(int ac, char **av)
 	ft_putstr_fd("\033[1;36mGame Launched Successfully\033[0m\n", 1);
 	init_graphics(&game);
 	render_map(&game);
-	mlx_hook(game.win, 2, 1L << 0, key_press, &game);
+	mlx_hook(game.win, 2, 1L, key_press, &game);
 	mlx_loop(game.mlx);
 	cleanup_game(&game);
 	return (0);
